@@ -8,19 +8,19 @@
             public int Age { get; set; }
         }
 
-        class StudentComparer : IEqualityComparer<Student>
-        {
-            public bool Equals(Student x, Student y)
-            {
-                if (x.Age == y.Age)
-                    return true;
-                return false;
-            }
-            public int GetHashCode(Student obj)
-            {
-                return obj.Age.GetHashCode();
-            }
-        }
+        //class StudentComparer : IEqualityComparer<Student>
+        //{
+        //    public bool Equals(Student x, Student y)
+        //    {
+        //        if (x.Age == y.Age)
+        //            return true;
+        //        return false;
+        //    }
+        //    public int GetHashCode(Student obj)
+        //    {
+        //        return obj.Age.GetHashCode();
+        //    }
+        //}
 
 
         public class Program
@@ -40,10 +40,11 @@
                  new Student(){StudentId = 3, StudentName = "Victoria", Age = 29},
                 new Student(){StudentId = 4, StudentName = "Anne", Age = 17}
             };
+         
 
-
-
-                IEnumerable<Student> selectResult = studentList.Where(s => s.Age > 16 && s.Age < 24).ToList<Student>();  //Where
+                IEnumerable<Student> selectResult = studentList
+                .GetWhereCondition(s => s.Age > 16 && s.Age < 24)
+                .ToList<Student>();  //Where
 
                 foreach (var item in selectResult)
                 {
@@ -52,36 +53,52 @@
                 }
 
                 Console.WriteLine();
-                IEnumerable<Student> selectone = studentList.SkipWhile(o => o.StudentId == 1).ToList();  //SkipWhile
+                IEnumerable<Student> selectone = studentList
+                .MySkipWhile(o => o.StudentId == 1)
+                .ToList();  //SkipWhile
 
                 foreach (Student item1 in selectone)
                 {
                     Console.WriteLine($"Student, whose id != 1: {item1.StudentName}-{item1.StudentId}");
                 }
 
-                Console.WriteLine();
-                IEnumerable<Student> res = studentList.Except(studentlist2, new StudentComparer()).ToList<Student>(); //Except
+            Console.WriteLine();
+            //IEnumerable<Student> res = studentList
+            //.Except(studentlist2, new StudentComparer())
+            //.ToList<Student>();  //Except
+            
+            var res = studentList
+            .MyExcept(studentlist2)
+            .ToList<Student>();
 
-                foreach (Student item2 in res)
+                foreach (var item2 in res)        
                 {
                     Console.WriteLine($"Here are our students: {item2.StudentName}");
                 }
+               
 
                 Console.WriteLine();
-                var result = studentList.Single(r => r.StudentId == 2);//Single
+                var result = studentList
+                .MySingle(r => r.StudentId == 2);   //Single
 
-                Console.WriteLine($"Student's name with id = 2:{result.StudentName}");
-
-                Console.WriteLine();
-
-                var result1 = studentList.All(x => x.Age == 23);//All
-
-                Console.WriteLine(result1);
-
+            foreach(var item in result)
+            {
+                Console.WriteLine($"Student's name with id = 2:{item.StudentName}");
+            }
 
                 Console.WriteLine();
 
-                var result2 = studentList.Any(e => e.StudentName == "Shein"); //Any
+              
+                var result1 = studentList.MyAll(x => x.Age == 23);     //All
+
+                Console.WriteLine($"Everbody's ages = 23: {result1}");
+
+
+
+                Console.WriteLine();
+
+                var result2 = studentList
+                .MyAny(e => e.StudentName == "Shein"); //Any
 
                 Console.WriteLine(result2);
 
